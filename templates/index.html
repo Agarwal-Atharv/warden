@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GuardianX Dashboard</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #0d1117;
+            color: #f0f6fc;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #58a6ff;
+        }
+
+        #alerts {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #30363d;
+            background-color: #161b22;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .alert {
+            background-color: #da3633;
+            color: white;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .timestamp {
+            color: #8b949e;
+            font-size: 0.9em;
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <h1>GuardianX Critical Infrastructure Dashboard</h1>
+    <p>Listening for real-time threats...</p>
+
+    <div id="alerts"></div>
+
+    <script>
+        const socket = io();
+        const alertsDiv = document.getElementById('alerts');
+
+        socket.on('connect', () => {
+            console.log("[SOCKET] Connected to server");
+        });
+
+        socket.on('alert', msg => {
+            console.log("[ALERT] " + msg);
+            const alertBox = document.createElement('div');
+            alertBox.className = 'alert';
+            alertBox.innerHTML = `
+                ${msg}
+                <span class="timestamp">${new Date().toLocaleTimeString()}</span>
+            `;
+            alertsDiv.prepend(alertBox);
+        });
+    </script>
+</body>
+</html>
